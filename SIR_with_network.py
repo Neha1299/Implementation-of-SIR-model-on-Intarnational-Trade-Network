@@ -1,4 +1,3 @@
-
 import pandas as pd
 import networkx as nx
 from matplotlib.pyplot import figure
@@ -7,7 +6,6 @@ import matplotlib.pyplot as plt
 df = pd.read_csv('./trade.csv')
 df1 = df[['ReporterName', 'PartnerName','Export']]
 df1=df1.values.tolist()
-#print(df1)
 print(type(df1))
 list1=df1
 lel_list = len(list1)
@@ -16,31 +14,30 @@ for i in list1:
         i[2]=0
     for j in list1[list1.index(i):lel_list]:
         if ([i[0],i[1]]== [j[1],j[0]]):
-         #print(i[0],i[1],j[1],j[0])
          if(i[2]>j[2]):
              i[2]=i[2]+j[2]
              j[2]=0
          else:
              j[2]+=i[2]
              i[2]=0 
-#print(i,j)
+
 df_len = len(df.index)
-#print(df[['ReporterName']][1:10])
+
 G = nx.Graph()
-for i in range(11999,12229):
+for i in range(df_len):
     G.add_edge(df.loc[i]['ReporterName'], df.loc[i]['PartnerName'], weight = df.loc[i]['Export'])
     
-#G = nx.from_pandas_edgelist(df1[0:100], source= "ReporterName", target= "PartnerName",edge_attr="TradeValue_in_1000_USD",create_using= nx.DiGraph)
+
 exxl= [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] > 100000000]
 exl= [(u, v) for (u, v, d) in G.edges(data=True) if 100000000 > d["weight"] >= 10000000]
 el = [(u, v) for (u, v, d) in G.edges(data=True) if 10000000 > d["weight"] >= 1000000]
 em=[(u, v) for (u, v, d) in G.edges(data=True) if 1000000 > d["weight"] >= 100000]
 esmall = [(u, v) for (u, v, d) in G.edges(data=True) if 100000> d["weight"] >= 10000]
 exs = [(u, v) for (u, v, d) in G.edges(data=True) if  d["weight"] < 10000]
-figure(figsize=(80,80))
-pos = nx.circular_layout(G)  # positions for all nodes - seed for reproducibility
+figure(figsize=(120,120))
+pos = nx.spring_layout(G)  # positions for all nodes - seed for reproducibility
 # nodes
-nx.draw_networkx_nodes(G,pos, node_size=100,node_color='red')
+nx.draw_networkx_nodes(G,pos, node_size=1000,node_color='red')
 # edges
 nx.draw_networkx_edges(G,pos, edgelist=exxl, width=6 , edge_color="red")
 nx.draw_networkx_edges(G,pos, edgelist=exl, width=4 , edge_color="black")
@@ -54,8 +51,6 @@ nx.draw_networkx_labels(G,pos, font_size=40, font_family="sans-serif")
 #edge_labels = nx.get_edge_attributes(G, "weight")
 #nx.draw_networkx_edge_labels(G,pos, edge_labels,font_size=10)
 
-#export=nx.get_edge_attributes(G,'TradeValue_in_1000_USD')
-#print(export)
 num_nodes = nx.number_of_nodes(G)
 num_edges = nx.number_of_edges(G)
 density = nx.density(G)
@@ -66,17 +61,13 @@ print("Number of Edges: %s" % num_edges)
 print("Density: %s" % density)
 #print("Transitivity: %s" % transitivity)
 #print("Avg. Clustering: %s" % avg_clustering)
-#pos=nx.circular_layout(G)
-#print(nx.degree_centrality(G))
  
 centrality = nx.eigenvector_centrality(G, max_iter=100, tol=1e-06, nstart=None, weight='Export')
-#centrality = nx.centrality(G,weight='Export')
-#y=(['%s %0.2f'%(node,centrality[node]) for node in centrality])
 y = dict(sorted(centrality.items(), key = lambda item: item[1],reverse=True))
 #print(y)
 eigen_centrality = [(k,v) for k,v in y.items()]
 #print(eigen_centrality)
-#print(type(eigen_centrality))
+
 k6=[]
 k5=[]
 k4=[]
@@ -96,6 +87,7 @@ for i in eigen_centrality:
         k2.append(i[0])
     elif 0.054 > i[1]:
         k1.append(i[0])
+        
 print('k6',k6, len(k6))
 print('k5',k5, len(k5))
 print('k4',k4, len(k4))
@@ -110,9 +102,9 @@ print('k2', len(k2))
 print('k1', len(k1))
 plt.show()
 
+### SIR implementation on Network
 
 Infected_country=input('Enter infected country :  ')
-
 
 if Infected_country in k6:
     print('k6')
@@ -144,7 +136,7 @@ elif Infected_country in k1:
     beta = 0.0035
     gamma = 0.5
     delta= 0.1
-#N= S + I + R
+
 print(num_nodes)
 n = 20000
 I0= 1
@@ -224,8 +216,6 @@ def rk4(t0,S0,I0,R0,tn,n):
    print('\nAt t=%.0f, I=%.0f' %((tn/50),In))
    print('\nAt t=%.0f, R=%.0f' %((tn/50),Rn))
    
-   #print('\nAt t=',i,' S=',S0,' I=',I0,' R=',R0)
-   #rint(S0+I0+R0)
    ax = plt.axes()
    points = [0, 2000, 4000, 6000, 8000, 10000,12000,14000,16000,18000,20000]
    labels = ["0", "40", "80", "120", "160", "200","240","280","320","360","400"]

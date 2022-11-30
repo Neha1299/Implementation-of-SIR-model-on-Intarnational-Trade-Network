@@ -54,17 +54,13 @@ nx.draw_networkx_labels(G,pos, font_size=40, font_family="sans-serif")
 num_nodes = nx.number_of_nodes(G)
 num_edges = nx.number_of_edges(G)
 density = nx.density(G)
-transitivity = nx.transitivity(G)
-avg_clustering = nx.average_clustering(G)
+
 print("Number of Nodes: %s" % num_nodes)
 print("Number of Edges: %s" % num_edges)
 print("Density: %s" % density)
-#print("Transitivity: %s" % transitivity)
-#print("Avg. Clustering: %s" % avg_clustering)
  
 centrality = nx.eigenvector_centrality(G, max_iter=100, tol=1e-06, nstart=None, weight='Export')
 y = dict(sorted(centrality.items(), key = lambda item: item[1],reverse=True))
-#print(y)
 eigen_centrality = [(k,v) for k,v in y.items()]
 #print(eigen_centrality)
 
